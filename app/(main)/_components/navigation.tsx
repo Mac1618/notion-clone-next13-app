@@ -15,6 +15,9 @@ import { ChevronsLeft, MenuIcon } from 'lucide-react';
 // Usehooks-ts Library
 import { useMediaQuery } from 'usehooks-ts';
 
+// Main Components
+import { UserItem } from './user-item';
+
 export const Navigation = () => {
 	// use to collapse the sidebar for mobile
 	const pathname = usePathname();
@@ -158,7 +161,7 @@ export const Navigation = () => {
 
 				{/*  */}
 				<div>
-					<p>Action Items</p>
+					<UserItem/>
 				</div>
 
 				{/*  */}
