@@ -15,12 +15,27 @@ import { PlusCircle } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
 
 // Convex Library
+import { api } from '@/convex/_generated/api';
+import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
 
 const DocumentsPage = () => {
 	// Destructuring 'useUser' grab the data from logged in users
 	const { user } = useUser();
 
-	console.log(user)
+	// Use to create new documents
+	const create = useMutation(api.document.create);
+
+	// Function to create new documents
+	const onCreate = () => {
+		const promise = create({ title: 'untitled' });
+
+		toast.promise(promise, {
+			loading: 'Creating a new note...',
+			success: 'Note created successfully!',
+			error: 'Failed to create a new note!',
+		});
+	};
 
 	return (
 		<div className="h-full flex flex-col items-center justify-center space-y-2">
@@ -41,7 +56,7 @@ const DocumentsPage = () => {
 
 			<h2 className="text-lg font-medium">Welcome to {user?.username}&apos;s Note Keeper</h2>
 
-			<Button>
+			<Button onClick={onCreate}>
 				<PlusCircle className="w-4 h-4 mr-2" />
 				Create a note
 			</Button>

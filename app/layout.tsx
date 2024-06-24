@@ -8,6 +8,9 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 // Convex Provider
 import { ConvexClientProvider } from '@/components/providers/convex-provider';
 
+// Sonner Library
+import { Toaster } from 'sonner';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -48,6 +51,7 @@ export default function RootLayout({
 						disableTransitionOnChange
 						storageKey="jotion-theme"
 					>
+						<Toaster position='bottom-center'/>
 						{children}
 					</ThemeProvider>
 				</ConvexClientProvider>

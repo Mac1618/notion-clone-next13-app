@@ -9,6 +9,9 @@ import { ElementRef, useEffect, useRef, useState } from 'react';
 // Shadcn UI Library
 import { cn } from '@/lib/utils';
 
+// Convex Library
+import { useQuery } from 'convex/react';
+
 //  Lucide Icons
 import { ChevronsLeft, MenuIcon } from 'lucide-react';
 
@@ -16,6 +19,7 @@ import { ChevronsLeft, MenuIcon } from 'lucide-react';
 import { useMediaQuery } from 'usehooks-ts';
 
 // Main Components
+import { api } from '@/convex/_generated/api';
 import { UserItem } from './user-item';
 
 export const Navigation = () => {
@@ -24,6 +28,9 @@ export const Navigation = () => {
 
 	// Check if the screensize is mobile
 	const isMobile = useMediaQuery('(max-width: 768px');
+
+	// use to query documents
+	const documents = useQuery(api.document.get)
 
 	// Sidebar variables
 	const isResizingRef = useRef(false);
@@ -34,23 +41,23 @@ export const Navigation = () => {
 
 	// Collapse or reset the sidebar on mobile and desktop devices
 	useEffect(() => {
-    // if mobile mode collapse the sidebar
+		// if mobile mode collapse the sidebar
 		if (isMobile) {
-			collapseSidebar()
-    
-    // else reset to normal state the sidebar
+			collapseSidebar();
+
+			// else reset to normal state the sidebar
 		} else {
-      resetSidebarWidth();
-    }
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+			resetSidebarWidth();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile]);
 
-  // Collapse on mobile devices
-  useEffect(() => {
-    if(isMobile) {
-      collapseSidebar();
-    }
-  }, [pathname, isMobile])
+	// Collapse on mobile devices
+	useEffect(() => {
+		if (isMobile) {
+			collapseSidebar();
+		}
+	}, [pathname, isMobile]);
 
 	// Listen when the mousedown event is emitted or when the mouse is pressed down
 	const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -161,12 +168,14 @@ export const Navigation = () => {
 
 				{/*  */}
 				<div>
-					<UserItem/>
+					<UserItem />
 				</div>
 
 				{/*  */}
 				<div className="mt-4">
-					<p>Documents</p>
+					{/* {documents?.map((document) => {
+						<p key={document._id}>document.title</p>
+					})} */}
 				</div>
 
 				{/* Borderline when hovering in sidebar */}
