@@ -14,6 +14,9 @@ export default defineSchema({
     icon: v.optional(v.string()),
     isPublished: v.boolean()
   })
+  // Query the currently logged in user
   .index("by_user", ["userId"])
-  .index("by_user_parent", ["parentDocument"])
+
+  // Combination of userId and parentDocument. Will be used in sidebar
+  .index("by_user_parent", ["userId","parentDocument"])
 })

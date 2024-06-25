@@ -17,6 +17,8 @@ import { useUser } from '@clerk/clerk-react';
 // Convex Library
 import { api } from '@/convex/_generated/api';
 import { useMutation } from 'convex/react';
+
+// SOnner Library
 import { toast } from 'sonner';
 
 const DocumentsPage = () => {
@@ -24,12 +26,14 @@ const DocumentsPage = () => {
 	const { user } = useUser();
 
 	// Use to create new documents
-	const create = useMutation(api.document.create);
+	const create = useMutation(api.documents.create);
 
 	// Function to create new documents
 	const onCreate = () => {
-		const promise = create({ title: 'untitled' });
+		// Creating the data to pass to the api documents
+		const promise = create({ title: 'untitled 02' });
 
+		// Notification about new documents
 		toast.promise(promise, {
 			loading: 'Creating a new note...',
 			success: 'Note created successfully!',

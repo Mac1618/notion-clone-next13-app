@@ -10,16 +10,20 @@ import { ElementRef, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 // Convex Library
-import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useMutation, useQuery } from 'convex/react';
+
+// SOnner Library
+import { toast } from 'sonner';
 
 //  Lucide Icons
-import { ChevronsLeft, MenuIcon } from 'lucide-react';
+import { ChevronsLeft, MenuIcon, PlusCircle } from 'lucide-react';
 
 // Usehooks-ts Library
 import { useMediaQuery } from 'usehooks-ts';
 
 // Main Components
-import { api } from '@/convex/_generated/api';
+import { Item } from './item';
 import { UserItem } from './user-item';
 
 export const Navigation = () => {
@@ -29,8 +33,9 @@ export const Navigation = () => {
 	// Check if the screensize is mobile
 	const isMobile = useMediaQuery('(max-width: 768px');
 
-	// use to query documents
-	const documents = useQuery(api.document.get)
+	// CONVEX: to query and create documents
+	const documents = useQuery(api.documents.get);
+	const createDocument = useMutation(api.documents.create);
 
 	// Sidebar variables
 	const isResizingRef = useRef(false);
@@ -141,6 +146,19 @@ export const Navigation = () => {
 		}
 	};
 
+	// Creating new document inside the sidebar
+	const handleCreateDocument = () => {
+		// Creating new note to the database
+		const promise = createDocument({ title: 'Untitled' });
+
+		// Notify using sonner
+		toast.promise(promise, {
+			loading: 'Creating a new note...',
+			success: 'Note created successfully',
+			error: 'Failed to create note',
+		});
+	};
+
 	return (
 		<>
 			<aside
@@ -166,16 +184,23 @@ export const Navigation = () => {
 					<ChevronsLeft className="h-6 w-6" />
 				</div>
 
-				{/*  */}
+				{/* User Information */}
 				<div>
 					<UserItem />
+					<Item
+						onClick={handleCreateDocument} //
+						label="New page" //
+						icon={PlusCircle}
+					/>
 				</div>
 
-				{/*  */}
+				{/* List of Notes */}
 				<div className="mt-4">
-					{/* {documents?.map((document) => {
-						<p key={document._id}>document.title</p>
-					})} */}
+					{documents?.map(
+						(
+							document //
+						) => <p key={document._id}>{document.title}</p>
+					)}
 				</div>
 
 				{/* Borderline when hovering in sidebar */}
