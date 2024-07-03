@@ -17,7 +17,7 @@ import { useMutation, useQuery } from 'convex/react';
 import { toast } from 'sonner';
 
 //  Lucide Icons
-import { ChevronsLeft, MenuIcon, PlusCircle } from 'lucide-react';
+import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react';
 
 // Usehooks-ts Library
 import { useMediaQuery } from 'usehooks-ts';
@@ -187,6 +187,19 @@ export const Navigation = () => {
 				{/* User Information */}
 				<div>
 					<UserItem />
+					<Item
+						label="Search" //
+						icon={Search}
+						isSearch
+						onClick={() => {}}
+					/>
+
+					<Item
+						label="Settings" //
+						icon={Settings}
+						onClick={() => {}}
+					/>
+
 					<Item
 						onClick={handleCreateDocument} //
 						label="New page" //

@@ -24,6 +24,36 @@ export const get = query({
 	},
 });
 
+export const getSidebar = query({
+	args:{
+		parentDocument: v.optional(v.id("documents"))
+	},
+	handler: async (ctx, args) => {
+		// Get the loggedin user
+		const identity = ctx.auth.getUserIdentity();
+
+		// Check the loggedin user
+		if (!identity ) {
+			throw new Error("Not Authenticated")
+		}
+
+		// Store the loggedin user data
+		const userId = identity.subject;
+
+	}
+})
+
+
+
+
+
+
+
+
+
+
+
+
 // Creating new documents
 export const create = mutation({
 	// Arguments to create new document
