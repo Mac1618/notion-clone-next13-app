@@ -1,13 +1,19 @@
 'use client';
 
 // Lucide React Icons
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react';
 
 // Convex Library
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { useMutation } from 'convex/react';
 
 // Shadcn Library
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { toast } from 'sonner';
 
 interface ItemProps {
 	// Opional props
@@ -41,6 +47,43 @@ export const Item = ({
 	// Icons to use
 	const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
+	// Folder expansion
+	const handleExpand = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		onExpand?.();
+	};
+
+	// Next Router
+	const router = useRouter();
+
+	// useMutation for creating new folder
+	const create = useMutation(api.documents.create);
+
+	// Create new folder
+	const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		// If no id is found, break the function 
+		if (!id) return;
+
+		// function to creat new note
+		const promise = create({ title: 'Untitled', parentDocument: id }).then(() => {
+			// Check if not expanded then expand
+			if (!expanded) {
+				onExpand?.();
+			}
+
+			// Redirect the user
+			// router.push(`/documents/${id}`);
+		});
+
+		// Notify
+		return toast.promise(promise, {
+			loading: 'Creating a new note...',
+			success: 'Note created successfully!',
+			error: 'Failed to create a new note!',
+		});
+	};
+
 	return (
 		<div
 			onClick={onClick}
@@ -56,8 +99,8 @@ export const Item = ({
 			{!!id && (
 				<div
 					role="button"
-					className="h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1"
-					onClick={() => {}}
+					className="h-ful rounded-sm hover:bg-neutral-300 hover:dark:bg-neutral-600 mr-1"
+					onClick={handleExpand}
 				>
 					<ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
 				</div>
@@ -79,6 +122,32 @@ export const Item = ({
 					<span className="text-xs">Ctrl + K</span>
 				</kbd>
 			)}
+			{!!id && (
+				<div className="ml-auto flex items-center gap-2">
+					<div 
+						role='button'
+						onClick={onCreate}
+						className="group-hover:opacity-100 opacity-0 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600">
+						<Plus className="w-4 h-4 text-muted-foreground" />
+					</div>
+				</div>
+			)}
+		</div>
+	);
+};
+
+Item.Skeleton = function ItemSkeleton({ level }: { level?: number }) {
+	return (
+		<div
+			style={{
+				paddingLeft:
+					// Ternary operator
+					level ? `${level * 12 + 25}px` : '12px',
+			}}
+			className="flex gap-x-3 py-[3px]"
+		>
+			<Skeleton className="h-4 w-4" />
+			<Skeleton className="h-4 w-[30%]" />
 		</div>
 	);
 };

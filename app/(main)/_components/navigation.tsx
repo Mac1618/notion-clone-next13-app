@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 // Convex Library
 import { api } from '@/convex/_generated/api';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 
 // SOnner Library
 import { toast } from 'sonner';
@@ -23,6 +23,7 @@ import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-rea
 import { useMediaQuery } from 'usehooks-ts';
 
 // Main Components
+import { DocumentList } from './document-list';
 import { Item } from './item';
 import { UserItem } from './user-item';
 
@@ -34,7 +35,6 @@ export const Navigation = () => {
 	const isMobile = useMediaQuery('(max-width: 768px');
 
 	// CONVEX: to query and create documents
-	const documents = useQuery(api.documents.get);
 	const createDocument = useMutation(api.documents.create);
 
 	// Sidebar variables
@@ -209,11 +209,7 @@ export const Navigation = () => {
 
 				{/* List of Notes */}
 				<div className="mt-4">
-					{documents?.map(
-						(
-							document //
-						) => <p key={document._id}>{document.title}</p>
-					)}
+					<DocumentList />
 				</div>
 
 				{/* Borderline when hovering in sidebar */}

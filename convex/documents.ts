@@ -2,57 +2,109 @@
 import { v } from 'convex/values';
 
 // Convex Access to Database
-import { title } from 'process';
 import { Doc, Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 
-// GET all documents
-export const get = query({
-	handler: async (ctx) => {
+export const archive = mutation({
+	args: {
+		// Id of what we want to archive
+		id: v.id('documents'),
+	},
+	handler: async (ctx, args) => {
+		// Get the loggedin user
 		const identity = await ctx.auth.getUserIdentity();
 
-		// If no logged in user then throw an error
+		// Check the loggedin user
 		if (!identity) {
-			throw new Error('Not Authenticated');
+			throw new Error('Not Authenticated!');
 		}
 
-		// Query all the documents
-		const documents = await ctx.db.query('documents').collect();
+		// Grabbing the user id
+		const userId = identity.subject;
 
-		// Return all the documents
-		return documents;
+		// Find if the documents exist
+		const existingDocument = await ctx.db.get(args.id);
+
+		// Throw error if document dont exist
+		if (!existingDocument) {
+			throw new Error('Not found!');
+		}
+
+		// Check if logged in userId is not equal to document creator userId
+		if (existingDocument.userId !== userId) {
+			throw new Error('Unauthorized access!');
+		}
+
+		// Recursive function to archive all children documents of the current documentId
+		const recursiveArchive = async (documentId: Id<'documents'>) => {
+			// Get the children documents of the current documentId
+			const children = await ctx.db
+				.query('documents')
+				.withIndex('by_user_parent', (q) =>
+					q //
+						.eq('userId', userId)
+						.eq('parentDocument', documentId)
+				)
+				.collect();
+
+			// Loop all the children documents
+			for (const child of children) {
+				await ctx.db.patch(child._id, {
+					isArchived: true,
+				});
+
+				// Rerun the entire function
+				await recursiveArchive(child._id);
+			}
+		};
+
+		// Update main parent document isArchived to true
+		const document = await ctx.db.patch(args.id, {
+			isArchived: true,
+		});
+
+		// Run the recursiveArchive loop for children documents
+		recursiveArchive(args.id);
+
+		return document;
 	},
 });
 
 export const getSidebar = query({
-	args:{
-		parentDocument: v.optional(v.id("documents"))
+	args: {
+		parentDocument: v.optional(v.id('documents')),
 	},
 	handler: async (ctx, args) => {
 		// Get the loggedin user
-		const identity = ctx.auth.getUserIdentity();
+		const identity = await ctx.auth.getUserIdentity();
 
 		// Check the loggedin user
-		if (!identity ) {
-			throw new Error("Not Authenticated")
+		if (!identity) {
+			throw new Error('Not Authenticated');
 		}
 
-		// Store the loggedin user data
+		// Grabbing the user id
 		const userId = identity.subject;
 
-	}
-})
+		// Query
+		const documents = await ctx.db
+			// Table name to query
+			.query('documents')
+			// Index and the value of the document
+			.withIndex('by_user_parent', (q) =>
+				q //
+					.eq('userId', userId)
+					.eq('parentDocument', args.parentDocument)
+			)
+			// Filter based on isArchived is false
+			.filter((q) => q.eq(q.field('isArchived'), false))
+			// Arrange the value to descending order
+			.order('desc')
+			.collect();
 
-
-
-
-
-
-
-
-
-
-
+		return documents;
+	},
+});
 
 // Creating new documents
 export const create = mutation({
