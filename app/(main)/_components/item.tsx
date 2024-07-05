@@ -1,7 +1,12 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 // Lucide React Icons
-import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
+
+// Clerk Library
+import { useUser } from '@clerk/clerk-react';
 
 // Convex Library
 import { api } from '@/convex/_generated/api';
@@ -9,10 +14,17 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useMutation } from 'convex/react';
 
 // Shadcn Library
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+
+// Sonner Library
 import { toast } from 'sonner';
 
 interface ItemProps {
@@ -44,36 +56,51 @@ export const Item = ({
 	level = 0,
 	onExpand,
 }: ItemProps) => {
-	// Icons to use
-	const ChevronIcon = expanded ? ChevronDown : ChevronRight;
-
-	// Folder expansion
-	const handleExpand = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		event.stopPropagation();
-		onExpand?.();
-	};
-
 	// Next Router
 	const router = useRouter();
 
-	// useMutation for creating new folder
+	// grabing the user data
+	const { user } = useUser();
+
+	// useMutation is used to call the api endpoint
 	const create = useMutation(api.documents.create);
+	const archive = useMutation(api.documents.archive);
+
+	// Icons to use
+	const ChevronIcon = expanded ? ChevronDown : ChevronRight;
+
+	// Soft deletes the documents
+	const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		// If no target id is found, break the function
+		if (!id) return;
+
+		// Request that archive the notes/documents
+		const promise = archive({ id: id });
+
+		//  Notif
+		return toast.promise(promise, {
+			loading: 'Moving to trash...',
+			success: 'Note has been moved to trash',
+			error: 'Failed to archive note',
+		});
+	};
 
 	// Create new folder
 	const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		event.stopPropagation();
-		// If no id is found, break the function 
+		// If no target id is found, break the function
 		if (!id) return;
 
 		// function to creat new note
 		const promise = create({ title: 'Untitled', parentDocument: id }).then(() => {
 			// Check if not expanded then expand
 			if (!expanded) {
-				onExpand?.();
+				return onExpand?.();
 			}
 
 			// Redirect the user
-			// router.push(`/documents/${id}`);
+			// return router.push(`/documents/${id}`);
 		});
 
 		// Notify
@@ -82,6 +109,12 @@ export const Item = ({
 			success: 'Note created successfully!',
 			error: 'Failed to create a new note!',
 		});
+	};
+
+	// Folder expansion
+	const handleExpand = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		onExpand?.();
 	};
 
 	return (
@@ -122,12 +155,39 @@ export const Item = ({
 					<span className="text-xs">Ctrl + K</span>
 				</kbd>
 			)}
+
+			{/* Adding new Folder with Plus icon */}
 			{!!id && (
 				<div className="ml-auto flex items-center gap-2">
-					<div 
-						role='button'
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							asChild //
+							onClick={(e) => e.stopPropagation()}
+						>
+							<div
+								role="button" //
+								className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600"
+							>
+								<MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+							</div>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem onClick={onArchive}>
+								<Trash className="h-4 w-4 text-muted-foreground mr-2" />
+								Delete
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<div className="text-xs text-muted-foreground ml-2">
+								Last edited by: {user?.fullName || user?.username}
+							</div>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<div
+						role="button"
 						onClick={onCreate}
-						className="group-hover:opacity-100 opacity-0 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600">
+						className="group-hover:opacity-100 opacity-0 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600"
+					>
 						<Plus className="w-4 h-4 text-muted-foreground" />
 					</div>
 				</div>
