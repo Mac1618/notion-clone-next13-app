@@ -31,7 +31,7 @@ const DocumentsPage = () => {
 	// Function to create new documents
 	const onCreate = () => {
 		// Creating the data to pass to the api documents
-		const promise = create({ title: 'untitled 02' });
+		const promise = create({ title: 'Untitled' });
 
 		// Notification about new documents
 		toast.promise(promise, {

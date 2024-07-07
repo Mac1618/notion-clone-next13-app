@@ -8,6 +8,7 @@ import { ElementRef, useEffect, useRef, useState } from 'react';
 
 // Shadcn UI Library
 import { cn } from '@/lib/utils';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 // Convex Library
 import { api } from '@/convex/_generated/api';
@@ -17,7 +18,7 @@ import { useMutation } from 'convex/react';
 import { toast } from 'sonner';
 
 //  Lucide Icons
-import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react';
+import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from 'lucide-react';
 
 // Usehooks-ts Library
 import { useMediaQuery } from 'usehooks-ts';
@@ -210,6 +211,22 @@ export const Navigation = () => {
 				{/* List of Notes */}
 				<div className="mt-4">
 					<DocumentList />
+					<Item //
+						onClick={handleCreateDocument}
+						label="Add a page"
+						icon={Plus}
+					/>
+					<Popover>
+						<PopoverTrigger className='w-full mt-4'>
+							<Item label='Trash' icon={Trash}/>
+						</PopoverTrigger>
+						<PopoverContent
+							className='p-0 w-72'
+							side={isMobile ? 'bottom' : 'right'}
+						>
+							<p>Trash box</p>
+						</PopoverContent>
+					</Popover>
 				</div>
 
 				{/* Borderline when hovering in sidebar */}
