@@ -179,15 +179,15 @@ export const getTrash = query({
 export const restoreDocument = mutation({
 	args: { id: v.id('documents') },
 	handler: async (ctx, args) => {
-		// Get the loggedin user
+		// Get the logged-in user
 		const identity = await ctx.auth.getUserIdentity();
 
-		// Check the loggedin user
+		// Check if the user is authenticated
 		if (!identity) {
 			throw new Error('Not Authenticated!');
 		}
 
-		// Grabbing the user id
+		// Grab the user ID
 		const userId = identity.subject;
 
 		// Retrieve the existing document from the database using the provided ID
@@ -202,6 +202,29 @@ export const restoreDocument = mutation({
 		if (existingDocument.userId !== userId) {
 			throw new Error('Unauthorized access!');
 		}
+
+		// Function to recursively restore child documents
+		const recursiveRestore = async (documentId: Id<'documents'>) => {
+			// Get all child documents
+			const children = await ctx.db
+				.query('documents')
+				.withIndex('by_user_parent', (q) =>
+					q //
+						.eq('userId', userId)
+						.eq('parentDocument', documentId)
+				)
+				.collect();
+
+			// Iterate over each child document and restore it
+			for (const child of children) {
+				await ctx.db.patch(child._id, {
+					isArchived: false,
+				});
+
+				// Recursively restore the child documents
+				await recursiveRestore(child._id);
+			}
+		};
 
 		// Prepare the options to update the document
 		const options: Partial<Doc<'documents'>> = {
@@ -220,9 +243,48 @@ export const restoreDocument = mutation({
 		}
 
 		// Update the document in the database
-		await ctx.db.patch(args.id, options);
+		const document = await ctx.db.patch(args.id, options);
+
+		// Recursively restore the document and its children
+		recursiveRestore(args.id);
 
 		// Return the existing document
-		return existingDocument;
+		return document;
+	},
+});
+
+// Delete a document permanently from the database
+export const removeDocument = mutation({
+	args: { id: v.id('documents') },
+	handler: async (ctx, args) => {
+		// Get the logged-in user
+		const identity = await ctx.auth.getUserIdentity();
+
+		// Check if the user is authenticated
+		if (!identity) {
+			throw new Error('Not Authenticated!');
+		}
+
+		// Grab the user ID
+		const userId = identity.subject;
+
+		// Retrieve the existing document from the database using the provided ID
+		const existingDocument = await ctx.db.get(args.id);
+
+		// Check if the document exists
+		if (!existingDocument) {
+			throw new Error('Not found!');
+		}
+
+		// Check if the document belongs to the logged-in user
+		if (existingDocument.userId !== userId) {
+			throw new Error('Unauthorized Access!');
+		}
+
+		// Delete the document from the database
+		const document = await ctx.db.delete(args.id);
+
+		// Return the deleted document
+		return document;
 	},
 });
