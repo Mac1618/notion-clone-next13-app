@@ -10,6 +10,9 @@ import { ElementRef, useEffect, useRef, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
+// Hooks 
+import { useSearch } from '@/hooks/use-search';
+
 // Convex Library
 import { api } from '@/convex/_generated/api';
 import { useMutation } from 'convex/react';
@@ -30,6 +33,8 @@ import { TrashBox } from './trash-box';
 import { UserItem } from './user-item';
 
 export const Navigation = () => {
+	const search = useSearch();
+
 	// use to collapse the sidebar for mobile
 	const pathname = usePathname();
 
@@ -193,7 +198,7 @@ export const Navigation = () => {
 						label="Search" //
 						icon={Search}
 						isSearch
-						onClick={() => {}}
+						onClick={search.onOpen}
 					/>
 
 					<Item
