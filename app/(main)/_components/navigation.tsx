@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 
 // Shadcn UI Library
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 // Convex Library
 import { api } from '@/convex/_generated/api';
@@ -26,6 +26,7 @@ import { useMediaQuery } from 'usehooks-ts';
 // Main Components
 import { DocumentList } from './document-list';
 import { Item } from './item';
+import { TrashBox } from './trash-box';
 import { UserItem } from './user-item';
 
 export const Navigation = () => {
@@ -165,7 +166,7 @@ export const Navigation = () => {
 			<aside
 				ref={sidebarRef}
 				className={cn(
-					'group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]',
+					'group/sidebar h-screen bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]',
 					// closing sidebar animation
 					isResetting && 'transition-all ease-in-out duration-300',
 					// When in mobile mode don't show the sidebar
@@ -217,14 +218,11 @@ export const Navigation = () => {
 						icon={Plus}
 					/>
 					<Popover>
-						<PopoverTrigger className='w-full mt-4'>
-							<Item label='Trash' icon={Trash}/>
+						<PopoverTrigger className="w-full mt-4">
+							<Item label="Trash" icon={Trash} />
 						</PopoverTrigger>
-						<PopoverContent
-							className='p-0 w-72'
-							side={isMobile ? 'bottom' : 'right'}
-						>
-							<p>Trash box</p>
+						<PopoverContent className="p-0 w-72" side={isMobile ? 'bottom' : 'right'}>
+							<TrashBox />
 						</PopoverContent>
 					</Popover>
 				</div>
