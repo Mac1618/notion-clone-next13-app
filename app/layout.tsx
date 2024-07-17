@@ -2,11 +2,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-// Shadcn UI Theme Provider
-import { ThemeProvider } from '@/components/providers/theme-provider';
-
-// Convex Provider
+// Providers
+import { ModalProvider } from '@/components/modals/modal-provider';
 import { ConvexClientProvider } from '@/components/providers/convex-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 // Sonner Library
 import { Toaster } from 'sonner';
@@ -51,7 +50,8 @@ export default function RootLayout({
 						disableTransitionOnChange
 						storageKey="jotion-theme"
 					>
-						<Toaster position='bottom-center'/>
+						<Toaster position="bottom-center" />
+						<ModalProvider />
 						{children}
 					</ThemeProvider>
 				</ConvexClientProvider>

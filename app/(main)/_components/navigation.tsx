@@ -10,8 +10,9 @@ import { ElementRef, useEffect, useRef, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
-// Hooks 
+// Hooks
 import { useSearch } from '@/hooks/use-search';
+import { useSettings } from '@/hooks/use-setting';
 
 // Convex Library
 import { api } from '@/convex/_generated/api';
@@ -34,6 +35,7 @@ import { UserItem } from './user-item';
 
 export const Navigation = () => {
 	const search = useSearch();
+	const settings = useSettings();
 
 	// use to collapse the sidebar for mobile
 	const pathname = usePathname();
@@ -204,7 +206,7 @@ export const Navigation = () => {
 					<Item
 						label="Settings" //
 						icon={Settings}
-						onClick={() => {}}
+						onClick={settings.onOpen}
 					/>
 
 					<Item
