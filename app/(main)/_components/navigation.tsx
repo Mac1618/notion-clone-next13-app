@@ -1,9 +1,5 @@
 'use client';
-
-// Next Library
-import { usePathname } from 'next/navigation';
-
-// React Library
+import { useParams, usePathname } from 'next/navigation';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 
 // Shadcn UI Library
@@ -28,6 +24,7 @@ import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } fro
 import { useMediaQuery } from 'usehooks-ts';
 
 // Main Components
+import { Navbar } from './navbar';
 import { DocumentList } from './document-list';
 import { Item } from './item';
 import { TrashBox } from './trash-box';
@@ -36,6 +33,7 @@ import { UserItem } from './user-item';
 export const Navigation = () => {
 	const search = useSearch();
 	const settings = useSettings();
+	const params = useParams();
 
 	// use to collapse the sidebar for mobile
 	const pathname = usePathname();
@@ -221,7 +219,7 @@ export const Navigation = () => {
 					<DocumentList />
 					<Item //
 						onClick={handleCreateDocument}
-						label="Add a page"
+						label="Add a page "
 						icon={Plus}
 					/>
 					<Popover>
@@ -252,15 +250,22 @@ export const Navigation = () => {
 					isMobile && 'left-0 w-full'
 				)}
 			>
-				<nav className="bg-transparent px-3 py-2 w-full">
-					{isCollaped && (
-						<MenuIcon
-							onClick={resetSidebarWidth}
-							role="button"
-							className="h-6 w-6 text-muted-foreground"
-						/>
-					)}
-				</nav>
+				{!!params.documentId ? (
+					<Navbar //
+						isCollapsed={isCollaped}
+						onResetWidth={resetSidebarWidth}
+					/>
+				) : (
+					<nav className="bg-transparent px-3 py-2 w-full">
+						{isCollaped && (
+							<MenuIcon
+								onClick={resetSidebarWidth}
+								role="button"
+								className="h-6 w-6 text-muted-foreground"
+							/>
+						)}
+					</nav>
+				)}
 			</div>
 		</>
 	);
