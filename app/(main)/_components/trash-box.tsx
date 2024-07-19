@@ -101,6 +101,8 @@ export const TrashBox = () => {
 				{filterTrashDocuments?.map((trash, i) => (
 					<div
 						key={i}
+						role="button"
+						onClick={() => onClick(trash._id)}
 						className="text-sm rounded-sm w-full hover:bg-primary/5 flex justify-between items-center text-primary"
 					>
 						<span className="truncate pl-2">{trash.title}</span>
@@ -117,7 +119,10 @@ export const TrashBox = () => {
 
 							{/* confirm modal */}
 							<ConfirmModal onConfirm={() => onRemoveTrash(trash._id)}>
-								<div role="button" className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600">
+								<div
+									role="button"
+									className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+								>
 									<Trash className="h-4 w-4 text-muted-foreground" />
 								</div>
 							</ConfirmModal>

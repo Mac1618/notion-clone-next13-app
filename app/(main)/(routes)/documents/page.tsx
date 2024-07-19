@@ -59,7 +59,6 @@ const DocumentsPage = () => {
 			/>
 
 			<h2 className="text-lg font-medium">Welcome to {user?.username}&apos;s Note Keeper</h2>
-
 			<Button onClick={onCreate}>
 				<PlusCircle className="w-4 h-4 mr-2" />
 				Create a note
