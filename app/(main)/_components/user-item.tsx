@@ -30,7 +30,7 @@ export const UserItem = () => {
 							<AvatarImage src={user?.imageUrl} />
 						</Avatar>
 
-						<span className="text-start font-medium line-clamp-1">
+						<span className="text-start font-medium line-clamp-1">  
 							{user?.username}&apos;s Note Keeper
 						</span>
 					</div>

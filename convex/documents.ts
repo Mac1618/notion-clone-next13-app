@@ -390,6 +390,6 @@ export const updateDocument = mutation({
 			{ ...rest }
 		);
 
-		return document
+		return document;
 	},
 });

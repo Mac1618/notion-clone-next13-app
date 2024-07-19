@@ -20,11 +20,16 @@ interface NavbarProps {
 	onResetWidth: () => void;
 }
 
+// Checks if the value is an instance of Error.
+function isError(data: any): data is Error {
+	return data instanceof Error;
+}
+
 export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
 	const params = useParams();
 
 	// query documents by params documentId
-	const document: any = useQuery(api.documents.getDocumentById, {
+	const document = useQuery(api.documents.getDocumentById, {
 		documentId: params.documentId as Id<'documents'>,
 	});
 
@@ -40,9 +45,9 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
 		);
 	}
 
-	// No document found
-	if (!document) {
-		return null;
+	// No document found or error
+	if (document === null || isError(document)) {
+		return <div>{document?.message || 'Not found.'}</div>;
 	}
 
 	return (
