@@ -12,6 +12,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Button } from './ui/button';
 
 // Reusable components
+import { useCoverImage } from '@/hooks/use-cover-image';
 import { IconPicker } from './icon-picker';
 
 interface ToolbarProps {
@@ -26,6 +27,12 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 
 	const update = useMutation(api.documents.updateDocument);
 	const removeIcon = useMutation(api.documents.removeIcon);
+
+	const { isOpen, onOpen, onClose } = useCoverImage((state) => ({
+		isOpen: state.isOpen,
+		onOpen: state.onOpen,
+		onClose: state.onClose,
+	}));
 
 	const enableInput = () => {
 		if (preview) return;
@@ -116,7 +123,7 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 				{/* ADD COVER: No Cover Image and not a guest */}
 				{!initialData.coverImage && !preview && (
 					<Button //
-						onClick={() => {}}
+						onClick={onOpen}
 						className="text-muted-foreground text-xs "
 						variant="outline"
 						size="sm"
