@@ -38,7 +38,7 @@ const MainLayout = ({ children }: MainLayoutType) => {
 	}
 
 	return (
-		<div className="h-full flex dark:[#1F1F1F]">
+		<div className="h-screen flex dark:[#1F1F1F]">
 			<Navigation />
 			<main className="flex-1 h-full overflow-y-auto">
 				<SearchCommand />

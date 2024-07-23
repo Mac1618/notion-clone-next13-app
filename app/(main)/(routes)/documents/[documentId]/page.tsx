@@ -2,11 +2,15 @@
 // Convex Library
 import { api } from '@/convex/_generated/api';
 import { Doc, Id } from '@/convex/_generated/dataModel';
-import { useQuery } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 
 // Reusable components
 import { Cover } from '@/components/cover';
 import { Toolbar } from '@/components/toolbar';
+
+// Shadcn components
+import { Editor } from '@/components/Editor';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // params props type
 interface DocumentIdPageProps {
@@ -25,9 +29,30 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 		documentId: params.documentId,
 	});
 
+	// use to save blocknote editor changes inside editor.tsx
+	const update = useMutation(api.documents.updateDocument);
+	const onChange = (content: string) => {
+		update({
+			id: params.documentId,
+			content: content,
+		});
+	};
+
 	// Loading state
 	if (document === undefined) {
-		return <div> Loading...</div>;
+		return (
+			<div>
+				<Cover.Skeleton />
+				<div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10">
+					<div className="space-y-4 pl-8 pt-4">
+						<Skeleton className="h-15 w-[50%]" />
+						<Skeleton className="h-4 w-[80%]" />
+						<Skeleton className="h-4 w-[40%]" />
+						<Skeleton className="h-4 w-[60%]" />
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	// No document found or error
@@ -37,9 +62,17 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 
 	return (
 		<div className="pb-40">
-			<Cover url={document.coverImage}  />
-			<div className="md:max-w-3xl lg:max-w-4xl mx-auto">
-				<Toolbar initialData={document} />
+			<Cover //
+				url={document.coverImage}
+			/>
+			<div className="md:max-w-3xl lg:max-w-4xl mx-auto space-y-4">
+				<Toolbar //
+					initialData={document}
+				/>
+				<Editor //
+					onChange={onChange}
+					initialContent={document.content}
+				/>
 			</div>
 		</div>
 	);

@@ -1,4 +1,3 @@
-import { url } from 'inspector';
 import { create } from 'zustand';
 
 type CoverImageStore = {
@@ -12,8 +11,7 @@ type CoverImageStore = {
 export const useCoverImage = create<CoverImageStore>((set) => ({
 	url: undefined,
 	isOpen: false,
-	onOpen: () => set({ isOpen: true }),
+	onOpen: () => set({ isOpen: true, url: undefined }),
 	onClose: () => set({ isOpen: false, url: undefined }),
 	onReplace: (url) => set({ isOpen: true, url: url }),
 }));
- 
