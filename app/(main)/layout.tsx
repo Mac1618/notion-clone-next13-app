@@ -10,8 +10,8 @@ import { useConvexAuth } from 'convex/react';
 import { Navigation } from './_components/navigation';
 
 // Reusable Component
-import { Spinner } from '@/components/spinner';
 import { SearchCommand } from '@/components/search-command';
+import { Spinner } from '@/components/spinner';
 
 // Layout Types
 interface MainLayoutType {
@@ -25,8 +25,9 @@ const MainLayout = ({ children }: MainLayoutType) => {
 	// Loading Component before showing the children pages
 	if (isLoading) {
 		return (
-			<div className="h-full flex justify-center items-center">
+			<div className="h-screen w-full flex justify-center items-center space-x-2">
 				<Spinner size="lg" />
+				<p>Loading...</p>
 			</div>
 		);
 	}
@@ -41,7 +42,8 @@ const MainLayout = ({ children }: MainLayoutType) => {
 			<Navigation />
 			<main className="flex-1 h-full overflow-y-auto">
 				<SearchCommand />
-				{children}</main>
+				{children}
+			</main>
 		</div>
 	);
 };

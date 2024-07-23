@@ -84,8 +84,8 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 					<IconPicker onChange={onIconSelect}>
 						<p className="text-6xl hover:opacity-75 transition">{initialData.icon}</p>
 					</IconPicker>
-					<Button
-						onClick={onRemoveIcon}
+						<Button
+							onClick={onRemoveIcon}
 						className="rounded-full opacity-0 group-hover:opacity-100 transition text-muted-foreground text-xs"
 						variant="outline"
 						size="icon"
@@ -94,7 +94,7 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 					</Button>
 				</div>
 			)}
-
+			
 			{/* For Guest */}
 			{!!initialData.icon && preview && (
 				<p //
