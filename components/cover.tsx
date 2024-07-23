@@ -22,11 +22,7 @@ interface CoverProps {
 export const Cover = ({ url, preview }: CoverProps) => {
 	const { edgestore } = useEdgeStore();
 	const params = useParams();
-	const { isOpen, onClose, onOpen } = useCoverImage((state) => ({
-		isOpen: state.isOpen,
-		onOpen: state.onOpen,
-		onClose: state.onClose,
-	}));
+	const coverImage = useCoverImage();
 
 	const removeCoverImage = useMutation(api.documents.removeCoverImage);
 
@@ -55,7 +51,7 @@ export const Cover = ({ url, preview }: CoverProps) => {
 			{url && !preview && (
 				<div className="opacity-0 group-hover:opacity-100 absolute bottom-5 right-5 flex items-center gap-x-2">
 					<Button
-						onClick={onOpen}
+						onClick={() => coverImage.onReplace(url)}
 						className="text-muted-foreground text-xs"
 						variant="outline"
 						size="sm"

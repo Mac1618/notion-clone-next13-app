@@ -25,16 +25,12 @@ export const CoverImageModal = () => {
 
 	// Hooks
 	const { edgestore } = useEdgeStore();
-	const { isOpen, onOpen, onClose } = useCoverImage((state) => ({
-		isOpen: state.isOpen,
-		onOpen: state.onOpen,
-		onClose: state.onClose,
-	}));
+	const coverImage = useCoverImage();
 
 	const handleOnClose = () => {
 		setFile(undefined);
 		setIsSubmitting(false);
-		onClose();
+		coverImage.onClose();
 	};
 
 	const handleOnChange = async (file?: File) => {
@@ -42,9 +38,13 @@ export const CoverImageModal = () => {
 			setIsSubmitting(true);
 			setFile(file);
 
-			// Upload the file in edge store
+			// Upload the coverImage file in edge store
 			const res = await edgestore.publicFiles.upload({
 				file,
+				// Optional: replace the current coveImage file
+				options: {
+					replaceTargetUrl: coverImage.url,
+				},
 			});
 
 			// update the document coverImage url
@@ -59,7 +59,7 @@ export const CoverImageModal = () => {
 	};
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onClose}>
+		<Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
 			<DialogContent>
 				<DialogHeader>
 					<h2 className="text-center text-lg font-semibold">Cover Image</h2>
