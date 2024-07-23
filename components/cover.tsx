@@ -10,7 +10,9 @@ import { Button } from './ui/button';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useCoverImage } from '@/hooks/use-cover-image';
+import { useEdgeStore } from '@/lib/edgestore';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
 
 interface CoverProps {
 	url?: string;
@@ -18,6 +20,7 @@ interface CoverProps {
 }
 
 export const Cover = ({ url, preview }: CoverProps) => {
+	const { edgestore } = useEdgeStore();
 	const params = useParams();
 	const { isOpen, onClose, onOpen } = useCoverImage((state) => ({
 		isOpen: state.isOpen,
@@ -27,7 +30,13 @@ export const Cover = ({ url, preview }: CoverProps) => {
 
 	const removeCoverImage = useMutation(api.documents.removeCoverImage);
 
-	const onRemoveCoverImage = () => {
+	const onRemoveCoverImage = async () => {
+		if (url) {
+			await edgestore.publicFiles.delete({
+				url: url,
+			});
+		}
+
 		removeCoverImage({
 			id: params.documentId as Id<'documents'>,
 		});
