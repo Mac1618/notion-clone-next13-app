@@ -1,5 +1,5 @@
 'use client';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 
 // Shadcn UI Library
@@ -24,13 +24,14 @@ import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } fro
 import { useMediaQuery } from 'usehooks-ts';
 
 // Main Components
-import { Navbar } from './navbar';
 import { DocumentList } from './document-list';
 import { Item } from './item';
+import { Navbar } from './navbar';
 import { TrashBox } from './trash-box';
 import { UserItem } from './user-item';
 
 export const Navigation = () => {
+	const router = useRouter();
 	const search = useSearch();
 	const settings = useSettings();
 	const params = useParams();
@@ -156,7 +157,10 @@ export const Navigation = () => {
 	// Creating new document inside the sidebar
 	const handleCreateDocument = () => {
 		// Creating new note to the database
-		const promise = createDocument({ title: 'Untitled' });
+		const promise = createDocument({ title: 'Untitled' }) //
+			.then((documentId) => {
+				router.push(`/documents/${documentId}`);
+			});
 
 		// Notify using sonner
 		toast.promise(promise, {

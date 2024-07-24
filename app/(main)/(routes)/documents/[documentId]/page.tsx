@@ -1,4 +1,7 @@
 'use client';
+import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
+
 // Convex Library
 import { api } from '@/convex/_generated/api';
 import { Doc, Id } from '@/convex/_generated/dataModel';
@@ -9,7 +12,6 @@ import { Cover } from '@/components/cover';
 import { Toolbar } from '@/components/toolbar';
 
 // Shadcn components
-import { Editor } from '@/components/Editor';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // params props type
@@ -25,6 +27,19 @@ function isError(data: any): data is Error {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
+	// recommended way from to import from block note docs
+	const Editor = useMemo(
+		() =>
+			//
+			dynamic(
+				() =>
+					//
+					import('@/components/editor'),
+				{ ssr: false }
+			),
+		[]
+	);
+
 	const document = useQuery(api.documents.getDocumentById, {
 		documentId: params.documentId,
 	});

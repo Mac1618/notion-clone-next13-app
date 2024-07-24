@@ -76,7 +76,10 @@ export const Item = ({
 		if (!id) return;
 
 		// Request that archive the notes/documents
-		const promise = archive({ id: id });
+		const promise = archive({ id: id }) //
+			.then((documentId) => {
+				router.push(`/documents`);
+			});
 
 		//  Notif
 		return toast.promise(promise, {
@@ -93,15 +96,16 @@ export const Item = ({
 		if (!id) return;
 
 		// function to creat new note
-		const promise = create({ title: 'Untitled', parentDocument: id }).then(() => {
-			// Check if not expanded then expand
-			if (!expanded) {
-				return onExpand?.();
-			}
+		const promise = create({ title: 'Untitled', parentDocument: id }) //
+			.then((documentId) => {
+				// Check if not expanded then expand
+				if (!expanded) {
+					return onExpand?.();
+				}
 
-			// Redirect the user
-			// return router.push(`/documents/${id}`);
-		});
+				// Redirect the user
+				return router.push(`/documents/${documentId}`);
+			});
 
 		// Notify
 		return toast.promise(promise, {
@@ -138,12 +142,14 @@ export const Item = ({
 					<ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
 				</div>
 			)}
+
 			{/* Custome Icons */}
 			{documentIcon ? (
 				<div className="shrink-0 h-[18px] mr-2">{documentIcon}</div>
 			) : (
-				<Icon className="shrink-0 h-[18px] mr-2 text-muted-foreground" />
+				<Icon className="shrink-0 h-[18px] w-[18px] mr-2 text-muted-foreground" />
 			)}
+
 			{/*  */}
 			<span className="truncate">{label}</span>
 			{/* Search Icon */}

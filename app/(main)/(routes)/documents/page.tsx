@@ -1,7 +1,6 @@
 'use client';
-
-// Next Library
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 // React Library
 
@@ -24,6 +23,7 @@ import { toast } from 'sonner';
 const DocumentsPage = () => {
 	// Destructuring 'useUser' grab the data from logged in users
 	const { user } = useUser();
+	const router = useRouter();
 
 	// Use to create new documents
 	const create = useMutation(api.documents.create);
@@ -31,7 +31,10 @@ const DocumentsPage = () => {
 	// Function to create new documents
 	const onCreate = () => {
 		// Creating the data to pass to the api documents
-		const promise = create({ title: 'Untitled' });
+		const promise = create({ title: 'Untitled' }) //
+			.then((documentId) => {
+				router.push(`/documents/${documentId}`);
+			});
 
 		// Notification about new documents
 		toast.promise(promise, {
