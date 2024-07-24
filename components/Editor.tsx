@@ -16,7 +16,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 
 interface EditorProps {
-	onChange: (value: string) => void;
+	onChange?: (value: string) => void;
 	initialContent?: string;
 	editable?: boolean;
 }
@@ -48,7 +48,7 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
 				theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
 				editable={editable}
 				onChange={() => {
-					onChange(JSON.stringify(editor.document, null, 2));
+					onChange !== undefined && onChange(JSON.stringify(editor.document, null, 2));
 				}}
 			/>
 		</div>
