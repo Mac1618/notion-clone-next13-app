@@ -34,7 +34,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 			dynamic(
 				() =>
 					//
-					import('@/components/editor'),
+					import('@/components/Editor'),
 				{ ssr: false }
 			),
 		[]
